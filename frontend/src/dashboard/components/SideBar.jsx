@@ -12,7 +12,7 @@ import ModalWrapper from './../../common/ModalWrapper';
 import DeleteConfirmation from './../../common/DeleteConfirmation';
 import { logoutUser } from './../../apis/auth';
 import { useNavigate } from 'react-router-dom';
-// import logo from "../../assets/images/bglogo.png";
+import logo from "../../assets/logo.png";
 
 
 const listData = [
@@ -70,7 +70,7 @@ export default function Sidebar({ setTab, tab, setOpen }) {
                     size={20}
                     onClick={() => setOpen((prev) => !prev)}
                     className='dark:text-gray-100 sticky md:hidden bottom-2 hover:text-slate-500 cursor-pointer' />
-                <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS0chhs7PCMWtuhOLg8yYBynOz2qsPmX_ydmCJwci-rkpfXh47lW_2YRRgT7skeD8INGrA&usqp=CAU"}
+                <img src={logo}
                     alt="pcte" className='w-8 h-8 rounded- object-cover' />
                 {open && "Code Loosers"}
             </div>

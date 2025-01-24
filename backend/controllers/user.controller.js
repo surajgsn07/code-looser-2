@@ -199,7 +199,7 @@ export const verifyUserToken = asynchandler(async (req, res) => {
       }
       let decodedToken;
       try {
-          decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+          decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
       } catch (error) {
           console.log(error)
           return res.status(401).json({ message: "Your Session has been expired", expiredSession: true });
