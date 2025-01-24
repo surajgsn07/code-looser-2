@@ -1,4 +1,4 @@
- import { uploadToCloudinary } from "../utils/cloudinary.js";
+import { uploadToCloudinary } from "../utils/cloudinary.js";
 import jwt from 'jsonwebtoken'
 import { OAuth2Client } from 'google-auth-library';
 // import sendEmail from '../service/sendMail.js';
@@ -11,7 +11,7 @@ const getToken = (user, exp = null) => {
     _id: user._id,
     email: user.email,
     name: user.name
-  }, process.env.JWT_SECRET,
+  }, process.env.ACCESS_TOKEN_SECRET,
     {
       expiresIn: exp ? exp : '1d'
     }
@@ -64,7 +64,6 @@ export const GoogleSignIn = asynchandler(async (req, res) => {
 
     const newUser = await new User({
       email,
-      userName: email?.split('@')[0],
       name: name,
       avatar: picture,
       gid: sub
@@ -88,7 +87,7 @@ export const GoogleSignIn = asynchandler(async (req, res) => {
 // Manual Register
 export const registerUser = asynchandler(async (req, res) => {
   const { email, password, name } = req.body;
-  console.log( email, password, name)
+
   if (!email || !password || !name)
     return res.status(400).json({ message: "All Fields are required" });
   const getUser = await User.findOne({ email: email });
