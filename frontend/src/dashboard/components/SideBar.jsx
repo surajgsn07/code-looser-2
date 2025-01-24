@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react'
-import { MdDashboard } from 'react-icons/md'
+import { MdDashboard  , MdPerson  , MdSettings } from 'react-icons/md'
 import { MdSendTimeExtension } from "react-icons/md";
 import { GrLogout, GrResources } from "react-icons/gr";
 import { MdFeedback } from "react-icons/md";
@@ -23,6 +23,14 @@ const listData = [
     {
         name: "Issues",
         icon: <MdSendTimeExtension size={20} />,
+    },
+    {
+        name: "Profile",
+        icon: <MdPerson  size={20} />,
+    },
+    {
+        name: "Settings",
+        icon: <MdSettings   size={20} />,
     },
     {
         name: "Requests",
@@ -108,6 +116,8 @@ export default function Sidebar({ setTab, tab, setOpen }) {
                 <GrLogout size={20} className='text-red-700' />
                 {open && "Log Out"}
             </div>
+
+            
         </div>
     )
 }
