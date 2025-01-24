@@ -7,6 +7,8 @@ import ProfileIcon from './components/profile/ProfileIcon';
  import { openSideBar } from '../recoil/states';
  import { useDarkMode } from '../contexts/DarkModeWrapper';
 import Sidebar from './components/SideBar';
+import Profile from './components/profile/Profile';
+import EditProfile from './components/profile/EditProfile';
 
 // Student Dashboard
 export default function Dashboard() {
@@ -38,6 +40,8 @@ export default function Dashboard() {
           dark:border-zinc-800 border-opacity-30
          justify-between'>
 
+          
+
 
           <div className='flex items-center gap-3'>
             <FaBars
@@ -61,6 +65,8 @@ export default function Dashboard() {
           {/* Content */}
 
           {sideTab === 'Dashboard' && "Dashboard Content"}
+          {sideTab === 'Profile' && <Profile setSideTab={setSideTab} />}
+          {sideTab === 'Settings' && <EditProfile/>}
          
 
 
