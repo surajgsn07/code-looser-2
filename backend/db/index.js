@@ -5,7 +5,7 @@ const connectDB  = async ()=>{
     
     console.log(`Mongodb connected with host ${connectionInstance.connection.host}`)
     } catch (error) {
-        console.log("SRC :: DB :: index.js :: mongodb connection failed " , error);
+        console.log(" mongodb connection failed " , error);
     }
 }
 

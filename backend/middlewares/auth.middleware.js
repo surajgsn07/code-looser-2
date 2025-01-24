@@ -1,31 +1,34 @@
-import jwt from "jsonwebtoken";
-import { User } from "../models/user.model.js";
+import expressAsyncHandler from "express-async-handler";
+ import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
 
-export const verifyJwt = async (req, res, next) => {
-  try {
+export const verifyAuth = expressAsyncHandler(async( req , res, next)=>{
+    try {
+        const token =  req.header("Authorization")?.replace("Bearer " , "");
+        if(!token){
+            res.status(401).json({ message: "Unauthorized request" });
+        }
+        let decodedToken;
+        try {
+           decodedToken= jwt.verify(token, process.env.JWT_SECRET);
+        } catch (error) {
+            console.log(error)
+            return res.status(401).json({ message: "Your Session has been expired",expiredSession:true });
+        }
+        if(!decodedToken){
+            return res.status(401).json({ message: "Your Session has been expired",expiredSession:true });
+         }
+
     
-    const token =
-      req.header("Authorization")?.replace("Bearer ", "");
+        const  user = await User.findById(decodedToken._id).select("-password");
 
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized request" });
+         if(!user){
+           return res.status(401).json({ message: "Invalid token" });
+        }
+        req.user = user;
+        next();
+    } catch (error) {
+        throw new ApiError(401, error?.message || "Invalid access token");
     }
 
-    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-    const user = await User.findById(decodedToken.id).select(
-      "-password -refreshToken"
-    );
-
-    if (!user) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
-
-    req.user = user;
-    next();
-  } catch (error) {
-    return res
-      .status(401)
-      .json({ message: error?.message || "Invalid access token" });
-  }
-};
+})

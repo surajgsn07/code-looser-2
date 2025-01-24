@@ -1,86 +1,135 @@
-import {User} from "../models/user.model.js";
 import { uploadToCloudinary } from "../utils/cloudinary.js";
+import jwt from 'jsonwebtoken'
+import { OAuth2Client } from 'google-auth-library';
+// import sendEmail from '../service/sendMail.js';
+import asynchandler from 'express-async-handler';
+import User from "../models/user.model.js";
 
-// Register a new user
-export const register = async (req, res) => {
+
+const getToken = (user, exp = null) => {
+  return jwt.sign({
+    _id: user._id,
+    email: user.email,
+    name: user.name
+  }, process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: exp ? exp : '1d'
+    }
+  )
+}
+
+
+// ============================== GOOGLE SIGNIN =====================================
+// Verify Google token function
+const client = new OAuth2Client(process.env.G_CLIENT_ID);
+
+const verifyGoogleToken = async (token) => {
   try {
-    console.log({req : req.body})
-    const { name , email, password} = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.G_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    return payload;
+  } catch (error) {
+    console.error('Error verifying token', error);
+    throw new Error('Invalid token');
+  }
+};
 
-    if(!name || !email || !password ) {
-    return res.status(400).json({ message: "All fields are required." });
+export const GoogleSignIn = asynchandler(async (req, res) => {
+  const { tokenId } = req.body;
+
+  try {
+    const googleUser = await verifyGoogleToken(tokenId);
+    const { email, name, picture, sub } = googleUser;
+
+    if (!email || !name || !sub)
+      return res.status(400).json({ message: "All fields are required" });
+
+    const getUser = await User.findOne({ email }).select("-password");
+
+    if (getUser) {
+      if (!getUser.gid) {
+        getUser.gid = sub;
+        await getUser.save();
+      }
+      const token = getToken(getUser);
+
+      return res.status(200).json({
+        message: "Account already exists, logged in successfully",
+        user: getUser, token: token
+      });
     }
 
-    // Check if email or username already exists
-    const existingEmail = await User.findOne({ email });
-
-    if (existingEmail) {
-      return res.status(400).json({ message: "Email already in use." });
-    }
-
-    // Create a new user
-    const user = new User({
-      name,
+    const newUser = await new User({
       email,
-      password
+      name: name,
+      avatar: picture,
+      gid: sub
     });
+    await newUser.save();
 
-    // Save user to the database
-    await user.save();
-    
-    // Generate JWT
-    const token = await user.generateJWT();
+    const token = getToken(newUser);
 
-    res.status(201).json({
-      message: "User registered successfully!",
-      user,
-      token
-    });
+    const userObject = newUser.toObject();
+    delete userObject.password;
+    res.status(201).json({ message: "Account created successfully", user: newUser, token: token });
+
   } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
+    console.error('Error during Google sign-in:', error);
+    res.status(500).json({ message: "Something went wrong while registering" });
   }
-};
+});
 
-// Login user
-export const login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
+// ===================================================================
 
-    if(!email || !password) {
-      return res.status(400).json({ message: "Email and password are required." });
-    }
+// Manual Register
+export const registerUser = asynchandler(async (req, res) => {
+  const { email, password, name } = req.body;
 
-    // Check if user exists
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ message: "User not found." });
-    }
+  if (!email || !password || !name)
+    return res.status(400).json({ message: "All Fields are required" });
+  const getUser = await User.findOne({ email: email });
+  if (getUser)
+    return res.status(400).json({ message: "Account already exists, Kindly login" });
 
-    // Check if password matches
-    const isMatch = await user.comparePassword(password, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password." });
-    }
+  const newUser = new User({ email, password, name });
+  await newUser.save();
 
-    // Generate JWT
-    const token = await user.generateJWT();
+  if (!newUser)
+    return res.status(500).json({ message: "Invalid User Data" });
 
-    res.status(200)
-    .cookie("accessToken", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    })
-    .json({
-      message: "Login successful!",
-      user,
-      token,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-};
+  const token = getToken(newUser);
 
+  const userObject = newUser.toObject();
+  delete userObject.password;
+  res.status(201).json({ message: "Account created 🤩", token: token, user: newUser });
+
+});
+
+// Login
+export const loginUser = asynchandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    return res.status(400).json({ message: "All Fields are required" });
+  const finduser = await User.findOne({ email: email });
+  if (!finduser)
+    return res.status(400).json({ message: "Account does not exist" });
+
+  const match = await finduser.comparePassword(password);
+
+  if (!match)
+    return res.status(401).json({ message: "Invalid credentials" });
+  const token = getToken(finduser);
+
+  const userObject = finduser.toObject();
+  delete userObject.password;
+
+  res.status(200).json({ message: "Welcome Back 🎉", token: token, user: userObject });
+
+});
 
 export const updateAvatar = async (req, res) => {
   try {
@@ -109,7 +158,7 @@ export const updateAvatar = async (req, res) => {
     });
 
 
-    
+
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
@@ -118,7 +167,7 @@ export const updateAvatar = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const userId = req.user._id;
-    const { name, skills, bio, achievements, links, address } = req.body;        
+    const { name, skills, bio, achievements, links, address } = req.body;
 
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -133,8 +182,41 @@ export const updateUser = async (req, res) => {
     res.status(200).json({
       message: "User updated successfully",
       user: updatedUser,
-    });    
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
+
+
+export const verifyUserToken = asynchandler(async (req, res) => {
+  try {
+      const token = req.header("Authorization")?.replace("Bearer ", "")
+
+      if (!token) {
+          res.status(401).json({ message: "Unauthorized request" });
+      }
+      let decodedToken;
+      try {
+          decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+      } catch (error) {
+          console.log(error)
+          return res.status(401).json({ message: "Your Session has been expired", expiredSession: true });
+      }
+      if (!decodedToken) {
+          return res.status(401).json({ message: "Your Session has been expired", expiredSession: true });
+      }
+
+      const user = await User.findById(decodedToken._id).select("-password");
+
+      if (!user) {
+          res.status(401).json({ message: "Invalid token" });
+      }
+
+      res.status(200).json({ user: user })
+  } catch (error) {
+      res.status(500).json({ message: "Invalid access token" });
+  }
+
+})
