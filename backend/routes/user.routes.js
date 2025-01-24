@@ -1,12 +1,13 @@
 import { Router } from "express";
-import { login, register, updateAvatar, updateUser } from "../controllers/user.controller.js";
+import { GoogleSignIn, loginUser, registerUser, updateAvatar, updateUser } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.js";
-import { verifyJwt } from "../middlewares/auth.middleware.js";
-const router = Router();
+import {verifyAuth } from "../middlewares/auth.middleware.js"
+ const router = Router();
 
-router.post("/register", register);
-router.post("/login" , login);
-router.post("/update-avatar" , verifyJwt ,upload.single("avatar") ,updateAvatar);
-router.post("/update" ,  verifyJwt,updateUser);
+router.post("/register", registerUser);
+router.post("/login", loginUser);
+router.post("/gsignin",GoogleSignIn)
+router.post("/update-avatar", verifyAuth, upload.single("avatar"), updateAvatar);
+router.post("/update", verifyAuth, updateUser);
 
 export default router;

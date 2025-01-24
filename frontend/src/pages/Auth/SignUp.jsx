@@ -25,7 +25,7 @@ const SignUp = () => {
     const [data, setData] = useState({
         email: '',
         password: "",
-        fullName: '',
+        name: '',
 
     });
 
@@ -51,7 +51,7 @@ const SignUp = () => {
         setLoading(true);
         try {
             const res = await axiosInstance.post(`/user/register`, {
-                ...data ,name:data.fullName
+                ...data  
             });
 
 
@@ -81,7 +81,7 @@ const SignUp = () => {
             return console.log('Login Failed');
         try {
             setLoading(true)
-            const res = await axios.post(`${serverUrl}/user/gsignin`, {
+            const res = await axiosInstance.post( `/user/gsignin`, {
                 tokenId: response.credential
             })
 
@@ -118,7 +118,7 @@ const SignUp = () => {
 
                     <form className="w-full " onSubmit={(e) => handleSubmit(e)}>
                         <input className='w-full my-2 p-2 px-3 outline-none rounded-md bg-gray-50 dark:bg-stone-800 dark:text-gray-50 '
-                            type="text" onChange={handleChange} name="fullName" placeholder='Full Name' required />
+                            type="text" onChange={handleChange} name="name" placeholder='Full Name' required />
                         <br />
                         <input className='w-full my-2 p-2 px-3  outline-none rounded-md bg-gray-50 dark:bg-stone-800 dark:text-gray-50 '
                             type="email" onChange={handleChange} name="email" placeholder='Email' required />
