@@ -187,3 +187,36 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 };
+
+
+
+export const verifyUserToken = asynchandler(async (req, res) => {
+  try {
+      const token = req.header("Authorization")?.replace("Bearer ", "")
+
+      if (!token) {
+          res.status(401).json({ message: "Unauthorized request" });
+      }
+      let decodedToken;
+      try {
+          decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+      } catch (error) {
+          console.log(error)
+          return res.status(401).json({ message: "Your Session has been expired", expiredSession: true });
+      }
+      if (!decodedToken) {
+          return res.status(401).json({ message: "Your Session has been expired", expiredSession: true });
+      }
+
+      const user = await User.findById(decodedToken._id).select("-password");
+
+      if (!user) {
+          res.status(401).json({ message: "Invalid token" });
+      }
+
+      res.status(200).json({ user: user })
+  } catch (error) {
+      res.status(500).json({ message: "Invalid access token" });
+  }
+
+})
