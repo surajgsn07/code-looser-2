@@ -125,7 +125,7 @@ const Login = () => {
                     </div>
 
 
-                    <GoogleOAuthProvider clientId="702829994495-1vhv30rsk04lssok9o2lmqi5d1cd7cha.apps.googleusercontent.com">
+                    <GoogleOAuthProvider clientId="702829994495-pfp4ughca3dhaio31i8qj372b9rg595f.apps.googleusercontent.com">
                         <div className='md:w-[450px] min-w-full max-sm:w-[260px] border-none  rounded-full mx-auto'>
                             <div className='mt-4  rounded-full dark:bg-stone-800'>
                                 <GoogleLogin

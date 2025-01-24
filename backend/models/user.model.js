@@ -11,14 +11,17 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    email:{
-        type: String,
-        required: true,
-        unique: true,
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    gid: {
+      type: String,
     },
     password: {
       type: String,
-      required: true,
+      // required: true,  
     },
     skills: {
       type: [String],
@@ -26,7 +29,7 @@ const userSchema = new mongoose.Schema(
     },
     experience: {
       type: mongoose.Schema.Types.ObjectId,
-      ref:"Experience",
+      ref: "Experience",
     },
     bio: {
       type: String,
@@ -64,12 +67,12 @@ const userSchema = new mongoose.Schema(
         trim: true,
       },
     },
-    avatar:{
-        type: String,
-        default:"https://imgs.search.brave.com/sE8MdXvDoqofUi5xFiPekWzRwNvt10-6tUkLkDA7KWA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA5LzE3LzEyLzIz/LzM2MF9GXzkxNzEy/MjM2N19rU3BkcFJK/NUhjbW4wczRXTWRK/YlNacGw3TlJ6d3Vw/VS5qcGc"
+    avatar: {
+      type: String,
+      default: "https://imgs.search.brave.com/sE8MdXvDoqofUi5xFiPekWzRwNvt10-6tUkLkDA7KWA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA5LzE3LzEyLzIz/LzM2MF9GXzkxNzEy/MjM2N19rU3BkcFJK/NUhjbW4wczRXTWRK/YlNacGw3TlJ6d3Vw/VS5qcGc"
     }
   },
-
+ 
   {
     timestamps: true, // Automatically adds createdAt and updatedAt fields
   }
@@ -101,6 +104,4 @@ userSchema.methods.generateJWT = function () {
 
 const User = mongoose.model('User', userSchema);
 
-export {
-  User
-}
+export default User;

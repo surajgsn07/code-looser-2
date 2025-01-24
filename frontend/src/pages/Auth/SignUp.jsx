@@ -25,7 +25,7 @@ const SignUp = () => {
     const [data, setData] = useState({
         email: '',
         password: "",
-        fullName: '',
+        name: '',
 
     });
 
@@ -51,7 +51,7 @@ const SignUp = () => {
         setLoading(true);
         try {
             const res = await axiosInstance.post(`/user/register`, {
-                ...data ,name:data.fullName
+                ...data  
             });
 
 
@@ -81,7 +81,7 @@ const SignUp = () => {
             return console.log('Login Failed');
         try {
             setLoading(true)
-            const res = await axios.post(`${serverUrl}/user/gsignin`, {
+            const res = await axiosInstance.post( `/user/gsignin`, {
                 tokenId: response.credential
             })
 
@@ -118,7 +118,7 @@ const SignUp = () => {
 
                     <form className="w-full " onSubmit={(e) => handleSubmit(e)}>
                         <input className='w-full my-2 p-2 px-3 outline-none rounded-md bg-gray-50 dark:bg-stone-800 dark:text-gray-50 '
-                            type="text" onChange={handleChange} name="fullName" placeholder='Full Name' required />
+                            type="text" onChange={handleChange} name="name" placeholder='Full Name' required />
                         <br />
                         <input className='w-full my-2 p-2 px-3  outline-none rounded-md bg-gray-50 dark:bg-stone-800 dark:text-gray-50 '
                             type="email" onChange={handleChange} name="email" placeholder='Email' required />
@@ -143,7 +143,7 @@ const SignUp = () => {
                     </div>
 
 
-                    <GoogleOAuthProvider clientId="702829994495-1vhv30rsk04lssok9o2lmqi5d1cd7cha.apps.googleusercontent.com">
+                    <GoogleOAuthProvider clientId="702829994495-pfp4ughca3dhaio31i8qj372b9rg595f.apps.googleusercontent.com">
                     <div className='md:w-[450px] max-sm:w-[260px] border-none  rounded-full mx-auto'>
                     <div className='mt-4  rounded-full dark:bg-stone-800'>
                                 <GoogleLogin
