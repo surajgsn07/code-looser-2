@@ -4,7 +4,7 @@ import { verifyAuth } from "../middlewares/auth.middleware.js";
 const router = Router();
 
 
-router.get('/create' , verifyAuth ,createTeam);
+router.post('/create' , verifyAuth ,createTeam);
 router.get('/all',getAllTeams)
 router.get('/search/:name',SearchTeam);
 router.get('/delete/:id' , deleteTeamById)

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addMultipleUsers, GoogleSignIn, loginUser, registerUser, updateAvatar, updateUser, verifyUserToken } from "../controllers/user.controller.js";
+import { addMultipleUsers, getAllPastUsers, GoogleSignIn, loginUser, registerUser, searchUsers, updateAvatar, updateUser, verifyUserToken } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.js";
 import {verifyAuth } from "../middlewares/auth.middleware.js"
  const router = Router();
@@ -11,5 +11,7 @@ router.post("/gsignin",GoogleSignIn)
 router.post("/update-avatar", verifyAuth, upload.single("avatar"), updateAvatar);
 router.post("/update", verifyAuth, updateUser);
 router.get('/verifyauth',verifyUserToken);
+router.get('/past-members' , verifyAuth ,getAllPastUsers);
+router.get('/search'  , searchUsers);
 
 export default router;
