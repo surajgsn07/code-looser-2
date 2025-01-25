@@ -1,3 +1,12 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+
+@custom-variant bg-cust-gradient (&:where(.bg-cust-gradient, .bg-cust-gradient *)) {
+    @apply bg-gradient-to-r from-cyan-500 to-blue-800;
+}
+
+@custom-variant bg-cust-hover (&:where(.bg-cust-hover, .bg-cust-hover *):hover) {
+    @apply bg-gradient-to-r from-blue-800 to-cyan-500;
+}
