@@ -36,7 +36,7 @@ const RequestSchema = new Schema({
   },
 });
 
-// Create the Request model
+
 const Request = mongoose.model('Request', RequestSchema);
 
 export{

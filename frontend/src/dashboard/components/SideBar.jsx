@@ -4,7 +4,7 @@ import { MdDashboard  , MdPerson  , MdSettings } from 'react-icons/md'
 import { MdSendTimeExtension } from "react-icons/md";
 import { GrLogout, GrResources } from "react-icons/gr";
 import { MdFeedback } from "react-icons/md";
-import { FaBars, FaBarsProgress } from "react-icons/fa6";
+import { FaBars, FaBarsProgress, FaSearchengin } from "react-icons/fa6";
 import { useRecoilState } from 'recoil';
 import { openSideBar } from './../../recoil/states';
 import { MdTimer } from "react-icons/md";
@@ -13,16 +13,13 @@ import DeleteConfirmation from './../../common/DeleteConfirmation';
 import { logoutUser } from './../../apis/auth';
 import { useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo.png";
+import { RiTeamLine } from "react-icons/ri";
 
 
 const listData = [
     {
         name: "Dashboard",
         icon: <MdDashboard size={20} />,
-    },
-    {
-        name: "Issues",
-        icon: <MdSendTimeExtension size={20} />,
     },
     {
         name: "Profile",
@@ -37,13 +34,8 @@ const listData = [
         icon: <GrResources size={20} />,
     },
     {
-        name: "Feedbacks",
-        icon: <MdFeedback size={20} />,
-    },
-
-    {
-        name: "Time Table",
-        icon: <MdTimer size={20} />
+        name:"Teams",
+        icon:<RiTeamLine  size={20} />
     }
 ]
 export default function Sidebar({ setTab, tab, setOpen }) {

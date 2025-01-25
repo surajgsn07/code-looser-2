@@ -220,3 +220,47 @@ export const verifyUserToken = asynchandler(async (req, res) => {
   }
 
 })
+
+
+
+
+
+export const addMultipleUsers = asynchandler(async (req, res) => {
+  const { users } = req.body;
+
+  // Validate input
+  if (!users || !Array.isArray(users) || users.length === 0) {
+    return res.status(400).json({ message: "Invalid input. Provide an array of users." });
+  }
+
+  try {
+    // Check for duplicate emails in the provided users
+    const emails = users.map((user) => user.email);
+    const existingUsers = await User.find({ email: { $in: emails } });
+    if (existingUsers.length > 0) {
+      const existingEmails = existingUsers.map((user) => user.email);
+      return res.status(400).json({
+        message: "Some users already exist in the database.",
+        existingEmails,
+      });
+    }
+
+    // Hash passwords and prepare user data
+    const usersToAdd = await Promise.all(
+      users.map(async (user) => ({
+        ...user
+      }))
+    );
+
+    // Insert users into the database
+    const newUsers = await User.insertMany(usersToAdd);
+
+    res.status(201).json({
+      message: "Users added successfully",
+      addedUsers: newUsers,
+    });
+  } catch (error) {
+    console.error("Error adding users:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
