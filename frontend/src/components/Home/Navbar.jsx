@@ -21,7 +21,8 @@ const Navbar = () => {
     setMobileDrawerOpen(!mobileDrawerOpen);
   };
   const navigate = useNavigate()
-  const {currUser,setCurrUser} = useRecoilState(userData);
+  const [currUser,setCurrUser] = useRecoilState(userData);
+  console.log({currUser})
 
   const handleLogout = () => {
     logoutUser().then((res) => {
