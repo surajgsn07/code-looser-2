@@ -17,7 +17,14 @@ app.use(cors({
 }))
 
 import userRoutes from "./routes/user.routes.js";
+import requestRoutes from "./routes/request.routes.js"
+import teamRoutes from "./routes/team.routes.js";
+import projectRouted from "./routes/project.routes.js"
 app.use("/user" , userRoutes);
+app.use('/request' , requestRoutes);
+app.use('/team' , teamRoutes)
+app.use('/project' , projectRouted);
+
 
 app.listen(PORT, () => {
     console.log("Backend is up and running on port 3000")
