@@ -116,7 +116,7 @@ export const acceptRequest = asynchandler(async (req, res) => {
         return res.status(404).json({ message: "Team not found" });
     }
 
-    team.members.push(userId);
+    team.members.push(req.user._id);
 
     if(team.members.length >= team.size){
         team.isFilled = true;
