@@ -16,7 +16,10 @@ export const createTeam = asynchandler(async (req, res) => {
         leader,
         size
     });
+    newTeam.members.push(leader);
     await newTeam.save();
+
+    
 
     if(!newTeam){
         return res.status(500).json({ message: "Invalid Team Data" });

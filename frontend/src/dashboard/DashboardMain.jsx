@@ -10,6 +10,8 @@ import Sidebar from './components/SideBar';
 import Profile from './components/profile/Profile';
 import EditProfile from './components/profile/EditProfile';
 import Search from './components/Search';
+import Teams from './components/Teams';
+
 
 // Student Dashboard
 export default function Dashboard() {
@@ -69,7 +71,7 @@ export default function Dashboard() {
           {sideTab === 'Profile' && <Profile setSideTab={setSideTab} />}
           {sideTab === 'Settings' && <EditProfile/>}
           {sideTab === 'Search' && <Search/>}
-          {sideTab === 'Teams' && "Teams Content"}
+          {sideTab === 'Teams' && <Teams/>}
          
 
 

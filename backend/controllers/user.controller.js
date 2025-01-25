@@ -4,6 +4,7 @@ import { OAuth2Client } from 'google-auth-library';
 // import sendEmail from '../service/sendMail.js';
 import asynchandler from 'express-async-handler';
 import User from "../models/user.model.js";
+import { Team } from "../models/team.model.js";
 
 
 const getToken = (user, exp = null) => {
@@ -261,6 +262,80 @@ export const addMultipleUsers = asynchandler(async (req, res) => {
     });
   } catch (error) {
     console.error("Error adding users:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
+
+
+// Handler for getting all past users who were part of mutual teams
+export const getAllPastUsers = asynchandler(async (req, res) => {
+  try {
+    const userId = req.user.id; // Current user's ID
+
+    // Step 1: Find all the teams the current user was or is a part of
+    const userTeams = await Team.find({ members: userId });
+
+    if (!userTeams || userTeams.length === 0) {
+      return res.status(404).json({ message: "No teams found for this user." });
+    }
+
+    // Step 2: Get all unique member IDs from these teams (excluding the current user)
+    const allMemberIds = new Set();
+    userTeams.forEach((team) => {
+      team.members.forEach((memberId) => {
+        if (memberId.toString() !== userId) {
+          allMemberIds.add(memberId.toString());
+        }
+      });
+    });
+
+    // Step 3: Fetch user details for the unique member IDs
+    const users = await User.find({ _id: { $in: Array.from(allMemberIds) } });
+
+    res.status(200).json(users); // Return the mutual users
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
+
+export const searchUsers = asynchandler(async (req, res) => {
+  try {
+    const { name, skill, location } = req.query;
+
+    let filter = {};
+
+    // Add filters based on query parameters
+    if (name) {
+      filter.name = { $regex: name, $options: "i" }; // Case-insensitive search
+    }
+
+    if (skill) {
+      filter.skills = { $in: [skill] }; // Filter by skill
+    }
+
+    if (location) {
+      // Assuming location is a single string like "city,state,country"
+      const [city, state, country] = location.split(',');
+
+      filter["address"] = {};
+      if (city) filter["address.city"] = { $regex: city, $options: "i" };
+      if (state) filter["address.state"] = { $regex: state, $options: "i" };
+      if (country) filter["address.country"] = { $regex: country, $options: "i" };
+    }
+
+    // Fetch new users from the database based on filters
+    const newUsers = await User.find(filter).exec();
+
+    if (!newUsers || newUsers.length === 0) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+    res.status(200).json({ users: newUsers });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal server error", error: error.message });
   }
 });
