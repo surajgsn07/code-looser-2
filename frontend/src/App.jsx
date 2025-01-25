@@ -9,6 +9,7 @@ import axiosInstance from './utils/axiosInstance';
 import Dashboard from './dashboard/DashboardMain';
 import SignUp from './pages/Auth/SignUp';
 import Login from './pages/Auth/Login';
+import Search from './dashboard/components/Search';
 function App() {
    const navigate = useNavigate();
   const [currentUserData, setUserData] = useRecoilState(userData);
@@ -52,6 +53,7 @@ function App() {
       <Route path="/login" element={<div><Login /></div>} />
       <Route path="/signup" element={<div><SignUp /></div>} />
       <Route path="/dashboard" element={<div><Dashboard /></div>} />
+      <Route path='search' element={<div><Search /></div>} />
       </Routes>
   )
 }

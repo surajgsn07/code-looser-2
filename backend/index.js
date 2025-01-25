@@ -17,11 +17,14 @@ app.use(cors({
 }))
 
 import userRoutes from "./routes/user.routes.js";
-import requestRoutes from "./routes/request.routes.js"
+import inviteRequestRoutes from "./routes/request.routes.js"
 import teamRoutes from "./routes/team.routes.js";
 import projectRouted from "./routes/project.routes.js"
+import joinRequestRoutes from "./routes/joinRequest.routes.js";
+
+app.use("/joinRequest" , joinRequestRoutes);
 app.use("/user" , userRoutes);
-app.use('/request' , requestRoutes);
+app.use('/invite' , inviteRequestRoutes);
 app.use('/team' , teamRoutes)
 app.use('/project' , projectRouted);
 
