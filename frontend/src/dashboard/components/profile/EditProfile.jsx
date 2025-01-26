@@ -1,26 +1,32 @@
-import React, { useState } from "react";
-import { FaMapMarkerAlt, FaEnvelope, FaGithub, FaLinkedin, FaGlobe } from "react-icons/fa";
+import React, { useEffect, useRef, useState } from "react";
+import { FaMapMarkerAlt, FaEnvelope, FaGithub, FaLinkedin, FaGlobe, FaSearchengin } from "react-icons/fa";
 import { userData } from "../../../recoil/states";
 import { useRecoilState } from "recoil";
 import axiosInstance from "../../../utils/axiosInstance";
 import { toast } from "react-toastify";
-import { FaSpinner } from "react-icons/fa"; // Import the loading spinner icon
+import Loader from "../../../components/Loaders/Loader";
+import { IoMdClose } from "react-icons/io";
+import { staticSkills } from "../../../data/data";
 
 
-const EditProfile = () => {
- 
-    
+const EditProfile = ({ setIsEditing }) => {
+
+
   const [user, setUserData] = useRecoilState(userData);
   const [loading, setloading] = useState(false)
 
   const [formData, setFormData] = useState({
     name: user.name,
     email: user.email,
-    bio: user.bio,
-    achievements: user.achievements,
-    skills: user.skills.join(", "), // Assuming skills are stored as a comma-separated string
-    address: `${user?.address?.city}, ${user?.address?.state}, ${user?.address?.country}`,
-    links: user.links.map(link => ({ title: link.title, url: link.link })),
+    bio: user?.bio || "",
+    achievements: [...user.achievements],
+    skills: [...user.skills],
+    address: {
+      city: user?.address?.city || "",
+      state: user?.address?.state || "",
+      country: user?.address?.country || "",
+    },
+    links: [...user.links],
   });
 
   const handleChange = (e) => {
@@ -31,7 +37,7 @@ const EditProfile = () => {
     });
   };
 
-  const handleSave = async() => {
+  const handleSave = async () => {
     const updatedUser = {
       ...user,
       name: formData.name,
@@ -48,16 +54,16 @@ const EditProfile = () => {
     };
     setloading(true)
     try {
-        const response = await axiosInstance.post('/user/update', updatedUser);
-        if(response.data){
-            setUserData(updatedUser);
-            toast.success('Profile updated successfully');
-        }
+      const response = await axiosInstance.post('/user/update', updatedUser);
+      if (response.data) {
+        setUserData(updatedUser);
+        toast.success('Profile updated successfully');
+      }
     } catch (error) {
-        console.log(error);
-        toast.error('Failed to update profile');
-    }finally{
-        setloading(false)
+      console.log(error);
+      toast.error('Failed to update profile');
+    } finally {
+      setloading(false)
     }
   };
 
@@ -76,147 +82,275 @@ const EditProfile = () => {
     });
   };
 
-  return (
-    <div className="p-4 sm:p-8 bg-white dark:bg-stone-900 shadow-lg rounded-xl mx-4 mt-6 max-w-4xl mx-auto">
-      <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
-        
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const dropdownRef = useRef(null); // Reference for detecting outside clicks
 
-        {/* User Info */}
-        <div className="flex-1 text-center sm:text-left">
+  // Filtered skills based on search query
+  const filteredSkills = staticSkills.filter(
+    (skill) =>
+      skill.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !user?.skills?.includes(skill)
+  );
+
+  const handleAddSkill = (skill) => {
+    setFormData((prevUser) => ({
+      ...prevUser,
+      skills: [...prevUser.skills, skill],
+    }));
+    setSearchQuery('');
+    setIsDropdownVisible(false); // Hide dropdown after selecting a skill
+  };
+
+  const handleRemoveSkill = (skill) => {
+    setFormData((prevUser) => ({
+      ...prevUser,
+      skills: prevUser.skills.filter((s) => s !== skill),
+    }));
+  };
+
+  // Handle outside click to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  return (
+    <div className="p-4 md:p-6 w-full h-full overflow-y-auto bg-white dark:bg-stone-900 shadow-lg rounded-xl">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-4">
+        <div className="flex w-full md:col-span-2 justify-between items-center gap-2 flex-wrap">
           <h1 className="text-2xl sm:text-3xl font-semibold text-stone-900 dark:text-gray-100 mb-4">Edit Profile</h1>
 
-          <div className="space-y-4 sm:space-y-6">
-            {/* Name Input */}
-            <div>
-              <label className="block text-sm sm:text-base text-gray-600 dark:text-gray-400">Name</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="mt-1 p-2 w-full rounded-md border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+          <div className="flex gap-2 items-center">
+            <button
+              className="bg-cyan-700 hover:bg-cyan-600 text-white px-5 py-1.5 text-sm rounded"
+              onClick={handleSave}
+            >
+              {loading ? <Loader /> : "Save"}
+            </button>
 
-            {/* Email Input */}
-            <div>
-              <label className="block text-sm sm:text-base text-gray-600 dark:text-gray-400">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="mt-1 p-2 w-full rounded-md border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Bio Input */}
-            <div>
-              <label className="block text-sm sm:text-base text-gray-600 dark:text-gray-400">Bio</label>
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleChange}
-                className="mt-1 p-2 w-full rounded-md border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Achievements Input */}
-            <div>
-              <label className="block text-sm sm:text-base text-gray-600 dark:text-gray-400">Achievements</label>
-              <textarea
-                name="achievements"
-                value={formData.achievements}
-                onChange={handleChange}
-                className="mt-1 p-2 w-full rounded-md border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Skills Input */}
-            <div>
-              <label className="block text-sm sm:text-base text-gray-600 dark:text-gray-400">Skills</label>
-              <input
-                type="text"
-                name="skills"
-                value={formData.skills}
-                onChange={handleChange}
-                className="mt-1 p-2 w-full rounded-md border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Address Input */}
-            <div>
-              <label className="block text-sm sm:text-base text-gray-600 dark:text-gray-400">Address</label>
-              <input
-                type="text"
-                name="address"
-                value={formData.address != "undefined, undefined, undefined" ? formData.address : ""}
-                onChange={handleChange}
-                placeholder="City, State, Country"
-                className="mt-1 p-2 w-full rounded-md border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* Links Section */}
-            <div className="mt-4">
-              <h2 className="text-sm sm:text-base text-gray-600 dark:text-gray-400">Links</h2>
-              {formData.links.map((link, index) => (
-                <div key={index} className="mt-2 space-y-2">
-                  <label className="block text-sm sm:text-base text-gray-600 dark:text-gray-400">Link Title</label>
-                  <input
-                    type="text"
-                    name={`link-title-${index}`}
-                    value={link.title}
-                    onChange={(e) => {
-                      const newLinks = [...formData.links];
-                      newLinks[index].title = e.target.value;
-                      setFormData({ ...formData, links: newLinks });
-                    }}
-                    className="mt-1 p-2 w-full rounded-md border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <label className="block text-sm sm:text-base text-gray-600 dark:text-gray-400">Link URL</label>
-                  <input
-                    type="text"
-                    name={`link-url-${index}`}
-                    value={link.url}
-                    onChange={(e) => {
-                      const newLinks = [...formData.links];
-                      newLinks[index].url = e.target.value;
-                      setFormData({ ...formData, links: newLinks });
-                    }}
-                    className="mt-1 p-2 w-full rounded-md border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => deleteLink(index)}
-                    className="text-red-600 hover:text-red-800 text-sm mt-2"
-                  >
-                    Delete Link
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={addLink}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md"
-              >
-                Add Link
-              </button>
-            </div>
-
-            <div className="mt-6 text-center">
-              <button
-                onClick={handleSave}
-                className="px-6 py-2 bg-green-600 text-white rounded-md"
-              >
-                {loading ? <>Saving <FaSpinner/></> : "Save Changes"}
-                
-              </button>
-            </div>
+            <button
+              className="bg-red-600 hover:bg-red-500 text-white px-5 py-1.5 text-sm rounded"
+              onClick={() => {
+                setFormData({
+                  name: user.name,
+                  email: user.email,
+                  bio: user?.bio || "",
+                  achievements: [...user.achievements],
+                  skills: [...user.skills],
+                  address: {
+                    city: user?.address?.city || "",
+                    state: user?.address?.state || "",
+                    country: user?.address?.country || "",
+                  },
+                  links: [...user.links],
+                });
+                setIsEditing(false);
+              }}
+            >
+              Cancel
+            </button>
           </div>
         </div>
+
+        {/* Name Input */}
+        <div>
+          <label className="block text-sm text-gray-600 dark:text-gray-400">Name</label>
+          <input
+            type="text"
+            name="name"
+            required
+            placeholder="Enter your name"
+            value={formData.name}
+            onChange={handleChange}
+            className="mt-1 px-3 py-1.5 w-full rounded-md text-sm border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-cyan-600"
+          />
+        </div>
+
+        {/* Email Input */}
+        <div>
+          <label className="block text-sm text-gray-600 dark:text-gray-400">Email</label>
+          <input
+            disabled
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="mt-1 px-3 py-1.5 w-full rounded-md text-sm border-2 bg-slate-100 opacity-60 cursor-not-allowed border-gray-300 dark:border-gray-800 dark:bg-stone-700 text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-cyan-600"
+          />
+        </div>
+
+        {/* Bio Input */}
+        <div className="md:col-span-2">
+          <label className="block text-sm text-gray-600 dark:text-gray-400">About</label>
+          <textarea
+            name="bio"
+            placeholder="Write About you..."
+            rows="4"
+            value={formData.bio}
+            onChange={handleChange}
+            className="mt-1 px-3 py-1.5 w-full rounded-md text-sm border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-cyan-600"
+          />
+        </div>
+
+        {/* Address Inputs */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:col-span-2">
+          {/* City Input */}
+          <div>
+            <label className="block text-sm text-gray-600 dark:text-gray-400">City</label>
+            <input
+              type="text"
+              name="city"
+              required
+
+              placeholder="Enter City"
+
+              value={formData.address.city}
+              onChange={handleChange}
+              className="mt-1 px-3 py-1.5 w-full rounded-md text-sm border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-cyan-600"
+            />
+          </div>
+
+          {/* State Input */}
+          <div>
+            <label className="block text-sm text-gray-600 dark:text-gray-400">State</label>
+            <input
+              type="text"
+              name="state"
+              required
+
+              placeholder="Enter State"
+              value={formData.address.state}
+              onChange={handleChange}
+              className="mt-1 px-3 py-1.5 w-full rounded-md text-sm border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-cyan-600"
+            />
+          </div>
+
+          {/* Country Input */}
+          <div>
+            <label className="block text-sm text-gray-600 dark:text-gray-400">Country</label>
+            <input
+              type="text"
+              required
+
+              placeholder="Enter Country"
+              name="country"
+              value={formData.address.country}
+              onChange={handleChange}
+              className="mt-1 px-3 py-1.5 w-full rounded-md text-sm border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-cyan-600"
+            />
+          </div>
+        </div>
+
+
+        {/* Skills */}
+
+        <div className="md:col-span-2 ">
+          <div className="flex justify-between flex-wrap gap-2">
+            <p className="block text-sm text-gray-600 dark:text-gray-400">Skills</p>
+
+            {/* Search Skills */}
+            <div className="relative min-w-[250px] " ref={dropdownRef}>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Add Skills"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setIsDropdownVisible(e.target.value !== ''); // Show dropdown if there's input
+                  }}
+                  onFocus={() => setIsDropdownVisible(searchQuery !== '')} // Show dropdown on focus
+                  className="w-full h-10 px-4 border border-stone-200 dark:border-stone-700 outline-none bg-transparent rounded-sm"
+                />
+                <FaSearchengin className="absolute right-4 top-1/2 transform -translate-y-1/2" />
+              </div>
+
+              {/* Skills Dropdown */}
+              {isDropdownVisible && filteredSkills.length > 0 && (
+                <div
+                  className="absolute top-10 left-0 w-full bg-white border border-stone-200 
+                                    dark:bg-stone-900 dark:border-stone-600 rounded-sm shadow-lg z-10
+                                    max-h-40 overflow-y-auto"
+                >
+                  {filteredSkills.map((skill, index) => (
+                    <div
+                      key={index}
+                      // onClick={() => {handleAddSkill(skill)}}
+                      className="px-4 py-2 cursor-pointer hover:bg-stone-100 dark:hover:bg-stone-800"
+                    >
+                      {skill}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Render Added Skills */}
+          <div className="flex flex-wrap gap-2 min-h-20 mt-1 border border-stone-200 dark:border-stone-700 py-2">
+            {formData?.skills.map((skill, index) => (
+              <div
+                key={index}
+                className="px-2 py-1 flex items-center gap-2 min-w-fit justify-between rounded-full bg-cyan-800 text-white text-sm"
+              >
+                <p className="min-w-fit">{skill}</p>
+                <IoMdClose onClick={() => handleRemoveSkill(skill)} className="cursor-pointer" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+            {/* Links */}
+            <div className="md:col-span-2">
+              <label className="block text-sm text-gray-600 dark:text-gray-400">Links</label>
+              <div className="flex flex-wrap gap-2 min-h-20 mt-1 border border-stone-200 dark:border-stone-700 py-2">
+                {formData?.links.map((link, index) => (
+                  <div
+                    key={index}
+                    className="px-2 py-1 flex items-center gap-2 min-w-fit justify-between rounded-full bg-cyan-800 text-white text-sm"
+                  >
+                    <p className="min-w-fit">{link?.title}</p>
+                    {/* <IoMdClose onClick={() => handleRemoveLink(link)} */}
+                     {/* className="cursor-pointer" />  */}
+
+                  </div>
+                ))}
+              </div>
+            </div>
+          
+            {/* Achievments */}
+            <div className="md:col-span-2">
+              <label className="block text-sm text-gray-600 dark:text-gray-400">Links</label>
+              <div className="flex flex-wrap gap-2 min-h-20 mt-1 border border-stone-200 dark:border-stone-700 py-2">
+                {formData?.links.map((link, index) => (
+                  <div
+                    key={index}
+                    className="px-2 py-1 flex items-center gap-2 min-w-fit justify-between rounded-full bg-cyan-800 text-white text-sm"
+                  >
+                    <p className="min-w-fit">{link?.title}</p>
+                    {/* <IoMdClose onClick={() => handleRemoveLink(link)} */}
+                     {/* className="cursor-pointer" />  */}
+
+                  </div>
+                ))}
+              </div>
+            </div>
+          
+
+
+
       </div>
     </div>
+
+
   );
 };
 

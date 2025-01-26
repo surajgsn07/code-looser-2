@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
     },
     achievements: {
-      type: [String],  // Change to array of strings
+      type: [String],  
       default: [],
     },
     links: [
