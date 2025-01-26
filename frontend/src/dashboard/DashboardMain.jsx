@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaBars } from 'react-icons/fa6'
 import { useRecoilState } from 'recoil';
  
@@ -12,6 +12,7 @@ import EditProfile from './components/profile/EditProfile';
 import Search from './components/Search';
 import Teams from './components/Teams';
 import Requests from './components/Requests';
+import { useNavigate } from 'react-router-dom';
 
 
 // Student Dashboard
@@ -19,6 +20,13 @@ export default function Dashboard() {
   const [open, setOpen] = useRecoilState(openSideBar);
   const [sideTab, setSideTab] = useState('Dashboard');
   const {mode, toggleMode} = useDarkMode();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (sideTab === "Search") {
+      navigate("/search");
+    }
+  }, [sideTab, navigate]);
 
   return (
     <div className='flex  w-full  min-h-screen max-h-screen '
@@ -71,7 +79,7 @@ export default function Dashboard() {
           {sideTab === 'Dashboard' && "Dashboard Content"}
           {sideTab === 'Profile' && <Profile setSideTab={setSideTab} />}
           {sideTab === 'Settings' && <EditProfile/>}
-          {sideTab === 'Search' && <Search/>}
+          
           {sideTab === 'Teams' && <Teams/>}
           {sideTab === 'Requests' && <Requests/>}
          

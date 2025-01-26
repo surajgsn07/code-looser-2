@@ -9,6 +9,7 @@ import User from "../models/user.model.js"
 export const createRequest = asynchandler(async (req, res) => {
 
     const {to , team} = req.body;
+    console.log({to , team})
     if(!to || !team){
         return res.status(400).json({ message: "All fields are required" });
     }
