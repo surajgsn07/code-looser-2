@@ -1,6 +1,6 @@
 import React from 'react'
 import ChatList from './ChatList'
-import ChatArea from './chatArea/chatArea'
+import ChatArea from './chatArea/ChatArea'
 import { accessedChat } from '../../../recoil/states';
 import { useRecoilState } from 'recoil';
 
