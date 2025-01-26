@@ -15,7 +15,7 @@ const ModalWrapper = ({ children, open, setOpenModal ,outsideClickClose=true}) =
     return ReactDOM.createPortal(
         <div
 
-            className="bg-black p-2 bg-opacity-30 backdrop-blur-lg h-full w-full fixed z-[1000] top-0 left-0"
+            className="bg-transparent p-2 bg-opacity-30 backdrop-blur-lg h-full w-full fixed z-[1000] top-0 left-0"
         >
             <div
                 ref={modalRef}
