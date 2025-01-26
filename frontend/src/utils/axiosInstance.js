@@ -3,7 +3,8 @@ import axiosRetry from 'axios-retry';
 import Cookie from "universal-cookie";
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000/', 
+  // baseURL: 'http://localhost:3000/',
+  baseURL: 'https://code-looser-2.onrender.com/', 
    withCredentials: true, 
 });
 
