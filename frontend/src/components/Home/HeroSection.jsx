@@ -25,7 +25,7 @@ export default function HeroSection() {
             Your One Stop Platform <span className="text-emerald-700 dark:text-emerald-600">to Connect</span> with Peers
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-700 dark:text-gray-300">
-            Manage labs effortlessly – from scheduling to resource tracking and issue resolution.
+            Bringing people to collaborate, learn, and grow together.
           </p>
 
           {/* Call to Actions */}
