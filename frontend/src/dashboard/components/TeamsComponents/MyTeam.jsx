@@ -64,6 +64,9 @@ const MyTeam = () => {
           description={team.description}
           members={team.members}
           onDelete={() => handleDelete(team._id)}
+          size={team.size}
+          teamId={team._id}
+          setTeams={setteams}
         />
       ))}
     </div>
