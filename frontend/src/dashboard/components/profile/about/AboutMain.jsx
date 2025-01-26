@@ -11,10 +11,9 @@ export default function AboutMain() {
 
             {user?.bio ? <>
                 <p className="text-thin text-sm">{user?.bio}
-                    dankdlnakdnkalndlkandklnlknapin;kd
-                    dadad
+ 
                 </p>
-                    <span className="text-cyan-700 text-sm cursor-pointer hover:text-cyan-600">Read More</span>
+                    {/* <span className="text-cyan-700 text-sm cursor-pointer hover:text-cyan-600">Read More</span> */}
             </> :
                 <p className="text-thin text-sm text-center opacity-50">No About is found</p>
             }

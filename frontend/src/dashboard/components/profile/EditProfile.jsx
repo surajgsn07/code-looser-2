@@ -37,56 +37,13 @@ const EditProfile = ({ setIsEditing }) => {
     });
   };
 
-  const handleSave = async () => {
-    const updatedUser = {
-      ...user,
-      name: formData.name,
-      email: formData.email,
-      bio: formData.bio,
-      achievements: formData.achievements,
-      skills: formData.skills.split(",").map(skill => skill.trim()),
-      address: {
-        city: formData.address?.split(",")[0] || "",
-        state: formData.address?.split(",")[1] || "",
-        country: formData.address?.split(",")[2] || "",
-      },
-      links: formData.links.map(link => ({ title: link.title, link: link.url })),
-    };
-    setloading(true)
-    try {
-      const response = await axiosInstance.post('/user/update', updatedUser);
-      if (response.data) {
-        setUserData(updatedUser);
-        toast.success('Profile updated successfully');
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error('Failed to update profile');
-    } finally {
-      setloading(false)
-    }
-  };
 
-  const addLink = () => {
-    setFormData({
-      ...formData,
-      links: [...formData.links, { title: "", url: "" }],
-    });
-  };
-
-  const deleteLink = (index) => {
-    const updatedLinks = formData.links.filter((_, idx) => idx !== index);
-    setFormData({
-      ...formData,
-      links: updatedLinks,
-    });
-  };
-
+   
   const [searchQuery, setSearchQuery] = useState('');
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const dropdownRef = useRef(null); // Reference for detecting outside clicks
+  const dropdownRef = useRef(null);  
 
-  // Filtered skills based on search query
+  // Filtered skills 
   const filteredSkills = staticSkills.filter(
     (skill) =>
       skill.toLowerCase().includes(searchQuery.toLowerCase()) &&
@@ -99,7 +56,7 @@ const EditProfile = ({ setIsEditing }) => {
       skills: [...prevUser.skills, skill],
     }));
     setSearchQuery('');
-    setIsDropdownVisible(false); // Hide dropdown after selecting a skill
+    setIsDropdownVisible(false);
   };
 
   const handleRemoveSkill = (skill) => {
@@ -122,6 +79,44 @@ const EditProfile = ({ setIsEditing }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  
+  const handleSave = async () => {
+    const updatedUser = {
+      ...user,
+      name: formData.name,
+      email: formData.email,
+      bio: formData.bio,
+      achievements: formData.achievements,
+      skills: [...formData.skills] ,
+      address: {
+        city: formData.address.city?.toLowerCase().charAt(0).toUpperCase() + formData.address.city.slice(1),
+        state: formData.address.state?.toLowerCase().charAt(0).toUpperCase() + formData.address.state.slice(1),
+        country: formData.address.country?.toLowerCase().charAt(0).toUpperCase() + formData.address.country.slice(1),
+      },
+      links: formData.links,
+    };
+
+    console.log(updatedUser)
+    setloading(true)
+    try {
+      const response = await axiosInstance.post('/user/update', updatedUser);
+      if (response.data) {
+        setUserData(updatedUser);
+        toast.success('Profile updated successfully');
+      }
+      setIsEditing(false);
+      
+    } catch (error) {
+      console.log(error);
+      toast.error('Failed to update profile');
+    } finally {
+      setloading(false)
+    }
+  };
+
+console.log(formData)
+  
   return (
     <div className="p-4 md:p-6 w-full h-full overflow-y-auto bg-white dark:bg-stone-900 shadow-lg rounded-xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-4">
@@ -213,7 +208,16 @@ const EditProfile = ({ setIsEditing }) => {
               placeholder="Enter City"
 
               value={formData.address.city}
-              onChange={handleChange}
+              onChange={(e)=>{
+                setFormData({
+                  ...formData,
+                  address: {
+                    ...formData.address,
+                    city: e.target.value  
+
+                  }
+                })
+              }}
               className="mt-1 px-3 py-1.5 w-full rounded-md text-sm border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-cyan-600"
             />
           </div>
@@ -228,7 +232,16 @@ const EditProfile = ({ setIsEditing }) => {
 
               placeholder="Enter State"
               value={formData.address.state}
-              onChange={handleChange}
+              onChange={(e)=>{
+                setFormData({
+                  ...formData,
+                  address: {
+                    ...formData.address,
+                    state: e.target.value
+                    
+                  }
+                })
+              }}
               className="mt-1 px-3 py-1.5 w-full rounded-md text-sm border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-cyan-600"
             />
           </div>
@@ -243,7 +256,16 @@ const EditProfile = ({ setIsEditing }) => {
               placeholder="Enter Country"
               name="country"
               value={formData.address.country}
-              onChange={handleChange}
+              onChange={(e)=>{
+                setFormData({
+                  ...formData,
+                  address: {
+                    ...formData.address,
+                    country: e.target.value
+                    
+                  }
+                })
+              }}
               className="mt-1 px-3 py-1.5 w-full rounded-md text-sm border-2 border-gray-300 dark:border-gray-800 dark:bg-stone-800 text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-cyan-600"
             />
           </div>
@@ -253,7 +275,7 @@ const EditProfile = ({ setIsEditing }) => {
         {/* Skills */}
 
         <div className="md:col-span-2 ">
-          <div className="flex justify-between flex-wrap gap-2">
+          <div className="flex items-center  justify-between flex-wrap gap-2">
             <p className="block text-sm text-gray-600 dark:text-gray-400">Skills</p>
 
             {/* Search Skills */}
@@ -265,9 +287,9 @@ const EditProfile = ({ setIsEditing }) => {
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
-                    setIsDropdownVisible(e.target.value !== ''); // Show dropdown if there's input
+                    setIsDropdownVisible(e.target.value !== ''); 
                   }}
-                  onFocus={() => setIsDropdownVisible(searchQuery !== '')} // Show dropdown on focus
+                  onFocus={() => setIsDropdownVisible(searchQuery !== '')}  
                   className="w-full h-10 px-4 border border-stone-200 dark:border-stone-700 outline-none bg-transparent rounded-sm"
                 />
                 <FaSearchengin className="absolute right-4 top-1/2 transform -translate-y-1/2" />
@@ -283,7 +305,7 @@ const EditProfile = ({ setIsEditing }) => {
                   {filteredSkills.map((skill, index) => (
                     <div
                       key={index}
-                      // onClick={() => {handleAddSkill(skill)}}
+                      onClick={() => { handleAddSkill(skill) }}
                       className="px-4 py-2 cursor-pointer hover:bg-stone-100 dark:hover:bg-stone-800"
                     >
                       {skill}
@@ -292,61 +314,26 @@ const EditProfile = ({ setIsEditing }) => {
                 </div>
               )}
             </div>
+
           </div>
 
-          {/* Render Added Skills */}
-          <div className="flex flex-wrap gap-2 min-h-20 mt-1 border border-stone-200 dark:border-stone-700 py-2">
-            {formData?.skills.map((skill, index) => (
-              <div
-                key={index}
-                className="px-2 py-1 flex items-center gap-2 min-w-fit justify-between rounded-full bg-cyan-800 text-white text-sm"
-              >
-                <p className="min-w-fit">{skill}</p>
-                <IoMdClose onClick={() => handleRemoveSkill(skill)} className="cursor-pointer" />
-              </div>
-            ))}
-          </div>
+          <div className="flex flex-wrap border border-stone-200 dark:border-stone-600 p-2 gap-2 mt-4 ">
+  {formData?.skills.map((skill, index) => (
+    <div
+      key={index}
+      className="px-2 py-1 flex w-fit h-6 items-center gap-2 justify-between rounded-full bg-cyan-800 text-white text-sm"
+    >
+      <p className="min-w-fit">{skill}</p>
+      <IoMdClose onClick={() => handleRemoveSkill(skill)} className="cursor-pointer" />
+    </div>
+  ))}
+</div>
+
+
+
+
+
         </div>
-
-            {/* Links */}
-            <div className="md:col-span-2">
-              <label className="block text-sm text-gray-600 dark:text-gray-400">Links</label>
-              <div className="flex flex-wrap gap-2 min-h-20 mt-1 border border-stone-200 dark:border-stone-700 py-2">
-                {formData?.links.map((link, index) => (
-                  <div
-                    key={index}
-                    className="px-2 py-1 flex items-center gap-2 min-w-fit justify-between rounded-full bg-cyan-800 text-white text-sm"
-                  >
-                    <p className="min-w-fit">{link?.title}</p>
-                    {/* <IoMdClose onClick={() => handleRemoveLink(link)} */}
-                     {/* className="cursor-pointer" />  */}
-
-                  </div>
-                ))}
-              </div>
-            </div>
-          
-            {/* Achievments */}
-            <div className="md:col-span-2">
-              <label className="block text-sm text-gray-600 dark:text-gray-400">Links</label>
-              <div className="flex flex-wrap gap-2 min-h-20 mt-1 border border-stone-200 dark:border-stone-700 py-2">
-                {formData?.links.map((link, index) => (
-                  <div
-                    key={index}
-                    className="px-2 py-1 flex items-center gap-2 min-w-fit justify-between rounded-full bg-cyan-800 text-white text-sm"
-                  >
-                    <p className="min-w-fit">{link?.title}</p>
-                    {/* <IoMdClose onClick={() => handleRemoveLink(link)} */}
-                     {/* className="cursor-pointer" />  */}
-
-                  </div>
-                ))}
-              </div>
-            </div>
-          
-
-
-
       </div>
     </div>
 
