@@ -11,7 +11,6 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-    // origin: 'http://localhost:5173',
     origin:"https://hack-meets.vercel.app",
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -22,7 +21,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
     connectionStateRecovery: {}, 
    cors: {
-     origin: process.env.CLIENT_URL || 'http://localhost:5173',
+     origin: process.env.CLIENT_URL || 'https://hack-meets.vercel.app',
      
    },
    pingTimeout: 60000,

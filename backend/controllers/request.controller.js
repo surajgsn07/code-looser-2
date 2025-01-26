@@ -59,7 +59,7 @@ export const createRequest = asynchandler(async (req, res) => {
         <p>You have a new request from ${req.user.name}.</p>
         <p>Team: ${teamInfo.name}</p>
         <p>This token is valid for 2 days.</p>
-        <p>Click <a href="http://localhost:5173/accept-request/${newRequest._id}/${resetToken}">here</a> to accept the request.</p>
+        <p>Click <a href="https://hack-meets.vercel.app/accept-request/${newRequest._id}/${resetToken}">here</a> to accept the request.</p>
         <p>Thanks</p>
         <p>HackMates</p>
         `,

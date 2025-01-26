@@ -30,7 +30,7 @@ const ForgotPass = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const res = await axios.post('http://localhost:3000/api/user/forgotpass', {
+            const res = await axios.post('https://code-looser-2.onrender.com/api/user/forgotpass', {
                 ...data
             })
             toast.success(res?.data?.message || 'Success');

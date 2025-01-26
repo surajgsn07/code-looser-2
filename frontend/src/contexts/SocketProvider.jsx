@@ -10,7 +10,7 @@ export const SocketProvider = ({ children }) => {
     const [currUser] = useRecoilState(userData);
     
     useEffect(() => {
-        const newSocket = io('http://localhost:3000');
+        const newSocket = io('https://code-looser-2.onrender.com');
         // const newSocket = io('https://gappe.onrender.com');
         setSocket(newSocket);
         console.log(newSocket)
