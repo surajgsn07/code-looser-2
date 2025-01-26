@@ -29,7 +29,9 @@ export default function Dashboard() {
   }, [sideTab, navigate]);
 
   return (
-    <div className='flex  w-full  min-h-screen max-h-screen '
+    <div className='flex  w-full bg-slate-50 dark:bg-stone-800
+    overflow-y-hidden 
+     min-h-screen max-h-screen '
       style={{ scrollbarWidth: "none" }}>
       <div
         className={`max-md:z-50 absolute min-h-full ${open ? "translate-x-0 flex-1 min-w-[270px] z-50" : "max-md:-translate-x-[130%] transition-all  w-[60px] "
@@ -72,7 +74,7 @@ export default function Dashboard() {
         </div>
 
 
-        <div className='w-full dark:bg-stone-800 bg-slate-50 mt-6 px-4' >
+        <div className='w-full dark:bg-stone-800 min-h-screen  mt-6 px-2' >
 
           {/* Content */}
 

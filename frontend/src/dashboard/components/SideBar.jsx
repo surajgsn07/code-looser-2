@@ -61,18 +61,17 @@ export default function Sidebar({ setTab, tab, setOpen }) {
         />
       </ModalWrapper>
 
-      <div
-        className=" text-2xl font-bold border-b
-             border-zinc-700 border-opacity-30 py-4 flex relative gap-4 items-center "
-      >
-        <FaBars
-          size={20}
-          onClick={() => setOpen((prev) => !prev)}
-          className="dark:text-gray-100 sticky md:hidden bottom-2 hover:text-slate-500 cursor-pointer"
-        />
-        <img src={logo} alt="pcte" className="w-8 h-8 rounded- object-cover" />
-        {open && "Hack Mates"}
-      </div>
+            <div className=' text-2xl font-bold border-b
+             border-zinc-700 border-opacity-30 py-4 flex relative gap-4 items-center '>
+                <FaBars
+                    size={20}
+                    onClick={() => setOpen((prev) => !prev)}
+                    className='dark:text-gray-100 sticky md:hidden bottom-2 hover:text-slate-500 cursor-pointer' />
+                <img src={logo}
+                    alt="pcte" className='w-8 h-8 rounded- object-cover' />
+                 {open && "HackMeets"}
+ 
+            </div>
 
       <div className="flex flex-col mt-5 gap-2">
         {listData.map((item, index) => (
