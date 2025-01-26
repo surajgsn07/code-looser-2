@@ -78,7 +78,7 @@ export const withdrawRequest = asynchandler(async (req, res) => {
 });
 
 export const getUserRequests = asynchandler(async (req, res) => {
-    const requests = await Request.find({ from: req.user._id });
+    const requests = await Request.find({ to: req.user._id  , status: "requested" , tokenExpiry: { $gt: Date.now() } }).populate("team").populate("from");
     res.status(200).json({ requests });
 });
 
@@ -91,10 +91,10 @@ export const getTeamRequests = asynchandler(async (req, res) => {
 
 
 export const acceptRequest = asynchandler(async (req, res) => {
-    const { requestId , token } = req.body;
+    const { requestId  } = req.body;
 
     // make and condition for request id and token
-    const request = await Request.findOne( { _id: requestId , token } );
+    const request = await Request.findOne( { _id: requestId  } );
     if(!request){
         return res.status(400).json({ message: "Request not found" });
     }
@@ -125,4 +125,13 @@ export const acceptRequest = asynchandler(async (req, res) => {
 
     
     res.status(200).json({ message: "Request accepted successfully", request });
+});
+
+export const rejectReuqest = asynchandler(async (req, res) => {
+    const { requestId } = req.params;
+    const request = await Request.findByIdAndDelete(requestId);
+    if(!request){
+        return res.status(404).json({ message: "Request not found" });
+    }
+    res.status(200).json({ message: "Request rejected successfully", request });
 });

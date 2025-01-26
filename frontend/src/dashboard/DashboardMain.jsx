@@ -11,6 +11,7 @@ import Profile from './components/profile/Profile';
 import EditProfile from './components/profile/EditProfile';
 import Search from './components/Search';
 import Teams from './components/Teams';
+import Requests from './components/Requests';
 
 
 // Student Dashboard
@@ -72,9 +73,8 @@ export default function Dashboard() {
           {sideTab === 'Settings' && <EditProfile/>}
           {sideTab === 'Search' && <Search/>}
           {sideTab === 'Teams' && <Teams/>}
+          {sideTab === 'Requests' && <Requests/>}
          
-
-
         </div>
 
         <div>
