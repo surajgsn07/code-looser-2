@@ -17,16 +17,8 @@ import { FaUsers } from "react-icons/fa";
 
 const listData = [
   {
-    name: "Dashboard",
-    icon: <MdDashboard size={20} />,
-  },
-  {
     name: "Profile",
     icon: <MdPerson size={20} />,
-  },
-  {
-    name: "Settings",
-    icon: <MdSettings size={20} />,
   },
   {
     name: "Requests",
