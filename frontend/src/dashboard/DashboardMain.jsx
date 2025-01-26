@@ -11,12 +11,13 @@ import Profile from './components/profile/Profile';
 import EditProfile from './components/profile/EditProfile';
 import Search from './components/Search';
 import Teams from './components/Teams';
+import ChatMain from './components/chats/ChatMain';
 
 
 // Student Dashboard
 export default function Dashboard() {
   const [open, setOpen] = useRecoilState(openSideBar);
-  const [sideTab, setSideTab] = useState('Dashboard');
+  const [sideTab, setSideTab] = useState('Profile');
   const {mode, toggleMode} = useDarkMode();
 
   return (
@@ -69,11 +70,12 @@ export default function Dashboard() {
 
           {/* Content */}
 
-          {sideTab === 'Dashboard' && "Dashboard Content"}
+          {/* {sideTab === 'Dashboard' && "Dashboard Content"} */}
           {sideTab === 'Profile' && <Profile setSideTab={setSideTab} />}
-          {sideTab === 'Settings' && <EditProfile/>}
+          {/* {sideTab === 'Settings' && <EditProfile/>} */}
           {sideTab === 'Search' && <Search/>}
           {sideTab === 'Teams' && <Teams/>}
+          {sideTab === 'Chats' && <ChatMain/>}
          
 
 

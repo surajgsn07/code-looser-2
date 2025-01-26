@@ -14,28 +14,34 @@ import { logoutUser } from './../../apis/auth';
 import { useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo.png";
 import { RiTeamLine } from "react-icons/ri";
+import { FaSms } from 'react-icons/fa';
+import { IoChatboxEllipses } from "react-icons/io5";
 
 
 const listData = [
-    {
-        name: "Dashboard",
-        icon: <MdDashboard size={20} />,
-    },
+    // {
+    //     name: "Dashboard",
+    //     icon: <MdDashboard size={20} />,
+    // },
     {
         name: "Profile",
         icon: <MdPerson  size={20} />,
     },
+    // {
+    //     name: "Settings",
+    //     icon: <MdSettings   size={20} />,
+    // },
     {
-        name: "Settings",
-        icon: <MdSettings   size={20} />,
+        name:"Teams",
+        icon:<RiTeamLine  size={20} />
+    },
+    {
+        name:"Chats",
+        icon:<IoChatboxEllipses  size={20} />
     },
     {
         name: "Requests",
         icon: <GrResources size={20} />,
-    },
-    {
-        name:"Teams",
-        icon:<RiTeamLine  size={20} />
     }
 ]
 export default function Sidebar({ setTab, tab, setOpen }) {
@@ -73,13 +79,13 @@ export default function Sidebar({ setTab, tab, setOpen }) {
                         <div key={index}
                             onClick={() => setTab(item.name)}
                             className={` 
-                    ${item.name === tab && "bg-gradient-to-r from-emerald-900 to-zinc-700 text-white"}
+                    ${item.name === tab && "bg-gradient-to-r from-cyan-900 to-zinc-700 text-white"}
                     
                     rounded-md
                        p-2 
                         transition-all
                      cursor-pointer
-                     hover:bg-gradient-to-r hover:from-emerald-800 hover:to-zinc-700
+                     hover:bg-gradient-to-r hover:from-cyan-800 hover:to-zinc-700
                      hover:text-white
                      font-semibold flex items-center gap-3
 
