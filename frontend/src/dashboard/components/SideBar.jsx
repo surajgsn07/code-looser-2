@@ -13,21 +13,17 @@ import { logoutUser } from "./../../apis/auth";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { RiTeamLine } from "react-icons/ri";
+import { IoChatboxEllipses } from "react-icons/io5";
+
 import { FaUsers } from "react-icons/fa";
 
 const listData = [
-  {
-    name: "Dashboard",
-    icon: <MdDashboard size={20} />,
-  },
+
   {
     name: "Profile",
     icon: <MdPerson size={20} />,
   },
-  {
-    name: "Settings",
-    icon: <MdSettings size={20} />,
-  },
+
   {
     name: "Requests",
     icon: <GrResources size={20} />,
@@ -35,6 +31,10 @@ const listData = [
   {
     name: "Teams",
     icon: <RiTeamLine size={20} />,
+  },
+  {
+    name: "Chats",
+    icon: <IoChatboxEllipses size={20} />,
   },
   {
     name: "Search",
@@ -78,22 +78,19 @@ export default function Sidebar({ setTab, tab, setOpen }) {
  
             </div>
 
-      <div className="flex flex-col mt-5 gap-2">
-        {listData.map((item, index) => (
-          <div
-            key={index}
-            onClick={() => setTab(item.name)}
-            className={` 
-                    ${
-                      item.name === tab &&
-                      "bg-gradient-to-r from-emerald-900 to-zinc-700 text-white"
-                    }
+            <div className='flex flex-col mt-5 gap-2'>
+                {
+                    listData.map((item, index) => (
+                        <div key={index}
+                            onClick={() => setTab(item.name)}
+                            className={` 
+                    ${item.name === tab && "bg-gradient-to-r from-cyan-900 to-zinc-700 text-white"}
                     
                     rounded-md
                        p-2 
                         transition-all
                      cursor-pointer
-                     hover:bg-gradient-to-r hover:from-emerald-800 hover:to-zinc-700
+                     hover:bg-gradient-to-r hover:from-cyan-800 hover:to-zinc-700
                      hover:text-white
                      font-semibold flex items-center gap-3
 

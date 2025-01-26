@@ -29,6 +29,10 @@ const TeamSchema = new Schema({
     required: true,
     min: 1, // Ensuring that team size is at least 1
   },
+  chat : {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Chat',
+  }
 });
 
 // Create the Team model

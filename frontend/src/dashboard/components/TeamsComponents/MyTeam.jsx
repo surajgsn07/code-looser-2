@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import TeamCard from './MyTeamCard';
 import axiosInstance from '../../../utils/axiosInstance';
 import { toast } from 'react-toastify';
+import { useRecoilState } from 'recoil';
+import { allTeams } from '../../../recoil/states';
 
 
 const MyTeam = () => {
 
     
-  const [teams, setteams] = useState([])
+  const [teams, setteams] = useRecoilState(allTeams)
   const [isLoading, setisLoading] = useState(false)
 
   const fetchTeams = async () => {
@@ -15,6 +17,7 @@ const MyTeam = () => {
         setisLoading(true)
       const response = await axiosInstance.get("/team/user");
       if(response.data){
+        console.log(response.data)
         setteams(response.data.teams)
       }
     } catch (error) {

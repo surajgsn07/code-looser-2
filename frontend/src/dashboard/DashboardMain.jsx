@@ -4,25 +4,29 @@ import { useRecoilState } from 'recoil';
  
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import ProfileIcon from './components/profile/ProfileIcon';
- import { openSideBar } from '../recoil/states';
+ import { allTeams, openSideBar } from '../recoil/states';
  import { useDarkMode } from '../contexts/DarkModeWrapper';
 import Sidebar from './components/SideBar';
 import Profile from './components/profile/Profile';
 import EditProfile from './components/profile/EditProfile';
 import Search from './components/Search';
 import Teams from './components/Teams';
+import ChatMain from './components/chats/ChatMain';
 import Requests from './components/Requests';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../utils/axiosInstance';
 import JoinTeam from './components/JoinTeam';
 
 
 // Student Dashboard
 export default function Dashboard() {
   const [open, setOpen] = useRecoilState(openSideBar);
-  const [sideTab, setSideTab] = useState('Dashboard');
+  const [sideTab, setSideTab] = useState('Profile');
   const {mode, toggleMode} = useDarkMode();
   const navigate = useNavigate();
 
+  const [teams, setteams] = useRecoilState(allTeams);
+  
   useEffect(() => {
     if (sideTab === "Search") {
       navigate("/search");
@@ -37,6 +41,24 @@ export default function Dashboard() {
 
 
 
+  const fetchTeams = async () => {
+    try {
+        // setisLoading(true)
+      const response = await axiosInstance.get("/team/user");
+      if(response.data){
+        console.log(response.data)
+        setteams(response.data.teams)
+      }
+    } catch (error) {
+      console.error("Error fetching teams:", error);
+    }finally{
+        // setisLoading(false)
+    }
+  };
+  useEffect(() => {
+    fetchTeams();
+  }, []);
+  
   return (
     <div className='flex  w-full bg-slate-50 dark:bg-stone-800
     overflow-y-hidden 
@@ -87,11 +109,15 @@ export default function Dashboard() {
 
           {/* Content */}
 
-          {sideTab === 'Dashboard' && "Dashboard Content"}
+          {/* {sideTab === 'Dashboard' && "Dashboard Content"} */}
           {sideTab === 'Profile' && <Profile setSideTab={setSideTab} />}
-          {sideTab === 'Settings' && <EditProfile/>}
-          
+          {/* {sideTab === 'Settings' && <EditProfile/>} */}
+          {sideTab === 'Search' && <Search/>}
           {sideTab === 'Teams' && <Teams/>}
+          {sideTab === 'Chats' && <ChatMain/>}
+          {/* {sideTab === 'Settings' && <EditProfile/>}
+          
+          {sideTab === 'Teams' && <Teams/>} */}
           {sideTab === 'Requests' && <Requests/>}
           {sideTab == 'Join a Team' && <JoinTeam/>}
          

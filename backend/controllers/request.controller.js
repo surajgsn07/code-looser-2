@@ -5,6 +5,7 @@ import { transporter } from '../utils/NodeMailerNotification.js';
 import { Team } from '../models/team.model.js';
 import crypto from 'crypto';
 import User from "../models/user.model.js"
+import Chat from '../models/chat.model.js';
 
 export const createRequest = asynchandler(async (req, res) => {
 
@@ -109,6 +110,7 @@ export const acceptRequest = asynchandler(async (req, res) => {
     request.status = "accepted";
     request.token = "";
     request.tokenExpiry = null;
+
     
     await request.save();
 
@@ -118,6 +120,16 @@ export const acceptRequest = asynchandler(async (req, res) => {
     }
 
     team.members.push(req.user._id);
+
+    // push the user to the chat
+    const chatid = team.chat;
+    const chat = await Chat.findById(chatid);
+    if(!chat){
+        return res.status(404).json({ message: "Chat not found" });
+    }
+    chat.users.push(req.user._id);
+    await chat.save();
+    
 
     if(team.members.length >= team.size){
         team.isFilled = true;
