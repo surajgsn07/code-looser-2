@@ -11,7 +11,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-    origin:"https://hack-meets.vercel.app",
+    origin:"https://hack-meets.netlify.app",
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }))
@@ -21,7 +21,7 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
     connectionStateRecovery: {}, 
    cors: {
-     origin: process.env.CLIENT_URL || 'https://hack-meets.vercel.app',
+     origin: process.env.CLIENT_URL || 'https://hack-meets.netlify.app',
      
    },
    pingTimeout: 60000,
