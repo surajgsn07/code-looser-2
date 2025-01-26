@@ -64,7 +64,7 @@ export default function Sidebar({ setTab, tab, setOpen }) {
                     className='dark:text-gray-100 sticky md:hidden bottom-2 hover:text-slate-500 cursor-pointer' />
                 <img src={logo}
                     alt="pcte" className='w-8 h-8 rounded- object-cover' />
-                {open && "Code Loosers"}
+                {open && "Hack Mates"}
             </div>
 
             <div className='flex flex-col mt-5 gap-2'>
