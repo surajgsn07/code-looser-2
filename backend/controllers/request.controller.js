@@ -5,10 +5,12 @@ import { transporter } from '../utils/NodeMailerNotification.js';
 import { Team } from '../models/team.model.js';
 import crypto from 'crypto';
 import User from "../models/user.model.js"
+import Chat from '../models/chat.model.js';
 
 export const createRequest = asynchandler(async (req, res) => {
 
     const {to , team} = req.body;
+    console.log({to , team})
     if(!to || !team){
         return res.status(400).json({ message: "All fields are required" });
     }
@@ -78,7 +80,7 @@ export const withdrawRequest = asynchandler(async (req, res) => {
 });
 
 export const getUserRequests = asynchandler(async (req, res) => {
-    const requests = await Request.find({ from: req.user._id });
+    const requests = await Request.find({ to: req.user._id  , status: "requested" , tokenExpiry: { $gt: Date.now() } }).populate("team").populate("from");
     res.status(200).json({ requests });
 });
 
@@ -91,10 +93,10 @@ export const getTeamRequests = asynchandler(async (req, res) => {
 
 
 export const acceptRequest = asynchandler(async (req, res) => {
-    const { requestId , token } = req.body;
+    const { requestId  } = req.body;
 
     // make and condition for request id and token
-    const request = await Request.findOne( { _id: requestId , token } );
+    const request = await Request.findOne( { _id: requestId  } );
     if(!request){
         return res.status(400).json({ message: "Request not found" });
     }
@@ -108,6 +110,7 @@ export const acceptRequest = asynchandler(async (req, res) => {
     request.status = "accepted";
     request.token = "";
     request.tokenExpiry = null;
+
     
     await request.save();
 
@@ -118,6 +121,16 @@ export const acceptRequest = asynchandler(async (req, res) => {
 
     team.members.push(req.user._id);
 
+    // push the user to the chat
+    const chatid = team.chat;
+    const chat = await Chat.findById(chatid);
+    if(!chat){
+        return res.status(404).json({ message: "Chat not found" });
+    }
+    chat.users.push(req.user._id);
+    await chat.save();
+    
+
     if(team.members.length >= team.size){
         team.isFilled = true;
     }
@@ -125,4 +138,13 @@ export const acceptRequest = asynchandler(async (req, res) => {
 
     
     res.status(200).json({ message: "Request accepted successfully", request });
+});
+
+export const rejectReuqest = asynchandler(async (req, res) => {
+    const { requestId } = req.params;
+    const request = await Request.findByIdAndDelete(requestId);
+    if(!request){
+        return res.status(404).json({ message: "Request not found" });
+    }
+    res.status(200).json({ message: "Request rejected successfully", request });
 });

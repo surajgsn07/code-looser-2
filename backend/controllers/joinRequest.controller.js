@@ -1,6 +1,7 @@
 import asynchandler from "express-async-handler";
 import JoinRequestModel from "../models/joinRequest.model.js";
 import { Team } from "../models/team.model.js";
+import Chat from "../models/chat.model.js";
 
 export const createJoinRequest = asynchandler(async(req,res)=>{
     const {teamId} = req.params;
@@ -54,6 +55,17 @@ export const acceptJoinRequest = asynchandler(async(req,res)=>{
 
     team.members.push(request.from);
     await team.save();
+
+    // push the user to the chat   
+      const chatid = team.chat;
+     const chat = await Chat.findById(chatid);
+     if(!chat){
+         return res.status(404).json({ message: "Chat not found" });
+     }
+     chat.users.push(request.from);
+     await chat.save();
+
+
 
     request.status = "accepted";
     await request.save();

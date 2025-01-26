@@ -1,6 +1,7 @@
 
 import asynchandler from 'express-async-handler';
 import { Team } from '../models/team.model.js';
+import Chat from '../models/chat.model.js';
 
 export const createTeam = asynchandler(async (req, res) => {
     const {name , description , size} = req.body;
@@ -25,14 +26,32 @@ export const createTeam = asynchandler(async (req, res) => {
         return res.status(500).json({ message: "Invalid Team Data" });
     }
 
+    // create a chat for the team
+    const chat = await Chat.create({
+        chatName: newTeam.name,
+        users: [leader],
+        groupAdmin: leader
+    })
+    newTeam.chat = chat._id;
+    await newTeam.save();
+
     res.status(201).json({ message: "Team created 🤩", team: newTeam });
 
 });
 
 export const getAllTeams = asynchandler(async (req, res) => {
-    const teams = await Team.find();
-    res.status(200).json({ teams });
-});
+    try {
+      const teams = await Team.find()
+       
+  
+      res.status(200).json({ teams });
+    } catch (error) {
+      console.error('Error fetching teams:', error);
+      res.status(500).json({ message: 'Could not fetch teams' });
+    }
+  });
+
+  
 
 export const SearchTeam = asynchandler(async (req, res) => {
     // search using regex
@@ -58,4 +77,36 @@ export const updateTeamById = asynchandler(async (req, res) => {
         return res.status(404).json({ message: "Team not found" });
     }
     res.status(200).json({ message: "Team updated successfully", team });
+});
+
+
+export const getUserTeams = asynchandler(async (req, res) => {
+    const teams = await Team.find({ members: { $in: [req.user._id] } })
+        .populate('members')
+        .populate({
+            path: 'chat',
+            populate: [
+                { 
+                    path: 'users', 
+                    select: 'name email' 
+                },
+                { 
+                    path: 'groupAdmin', 
+                    select: 'name email' 
+                },
+                { 
+                    path: 'latestMessage', 
+                    populate: { 
+                        path: 'sender', 
+                        select: 'name email' 
+                    } 
+                }
+            ]
+        });
+
+    if (!teams || teams.length === 0) {
+        return res.status(404).json({ message: "No teams found" });
+    }
+
+    res.status(200).json({ teams });
 });

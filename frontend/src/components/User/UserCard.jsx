@@ -1,27 +1,7 @@
 import React from "react";
-import { IoMdMail   } from "react-icons/io";
+import { IoMdMail } from "react-icons/io";
 import { CgProfile } from "react-icons/cg";
-export default function ProfileCard() {
-
-    const user = {
-        "_id": {
-          "$oid": "67947749e69588b53e98f009"
-        },
-        "name": "Suraj Singh",
-        "email": "suraj.singh@mltech.com",
-        "skills": [
-          "Python",
-          "Django",
-          "Machine Learning"
-        ],
-        "bio": "AI enthusiast, building intelligent systems.",
-        "address": {
-          "state": "Uttar Pradesh",
-          "city": "Lucknow",
-          "country": "India"
-        },
-        "avatar": "https://imgs.search.brave.com/sE8MdXvDoqofUi5xFiPekWzRwNvt10-6tUkLkDA7KWA/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA5LzE3LzEyLzIz/LzM2MF9GXzkxNzEy/MjM2N19rU3BkcFJK/NUhjbW4wczRXTWRK/YlNacGw3TlJ6d3Vw/VS5qcGc"
-      }
+export default function ProfileCard({ user, setselecteduser  , setIsmakingRequest }) {
   return (
     <div className="relative p-3 max-w-sm mx-auto bg-white dark:bg-stone-900 rounded-2xl shadow-md overflow-hidden border border-gray-200 dark:border-stone-700">
       {/* Availability Badge */}
@@ -50,7 +30,7 @@ export default function ProfileCard() {
       <div className="flex justify-center mt-6">
         <div className="h-24 w-24 rounded-full overflow-hidden border-4 bg-gradient-to-r from-cyan-500 to-blue-800">
           <img
-            src={ user?.avatar ||  "https://via.placeholder.com/150"}
+            src={user?.avatar || "https://via.placeholder.com/150"}
             alt="User Profile"
             className="object-cover w-full h-full"
           />
@@ -83,7 +63,13 @@ export default function ProfileCard() {
               d="M12 11a2 2 0 100-4 2 2 0 000 4z"
             />
           </svg>
-          <span>Based in: {`${user?.address?.city},${user?.address?.state} , ${user?.address?.country}`}</span>
+          <span>
+            Based in:{" "}
+            {user?.address?.city === undefined
+              ? "NA"
+              : `${user?.address?.city},${user?.address?.state} , ${user?.address?.country}`}{" "}
+            {}
+          </span>
         </div>
         <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
           {user?.bio?.slice(0, 100)}
@@ -91,16 +77,21 @@ export default function ProfileCard() {
       </div>
 
       {/* View Profile Buttons */}
-      <div className="mt-6 mb-4 flex justify-around">
-      <button className="bg-gradient-to-r from-cyan-500 to-blue-800 text-white px-4 py-2 text-sm font-medium rounded-full hover:bg-gradient-to-r hover:from-cyan-800 hover:to-blue-800 cursor-pointer flex items-center justify-center gap-2">
-  <CgProfile  />
-  View Profile
-</button>
-        <button className="bg-gradient-to-r from-cyan-500 to-blue-800 text-white px-4 py-2 text-sm font-medium rounded-full hover:bg-gradient-to-r hover:from-cyan-800 hover:to-blue-800 cursor-pointer flex items-center justify-center gap-2">
-        <IoMdMail />
-  Request
-</button>
-
+      <div className="mt-6 gap-1.5 mb-4 flex justify-around">
+        <button
+          onClick={() => setselecteduser(user)}
+          className="bg-gradient-to-r from-cyan-500 to-blue-800 text-white px-4 py-2 text-sm font-medium rounded-full hover:bg-gradient-to-r hover:from-cyan-800 hover:to-blue-800 cursor-pointer flex items-center justify-center gap-2"
+        >
+          <CgProfile />
+          View Profile
+        </button>
+        <button
+          onClick={() => {setselecteduser(user)  
+            setIsmakingRequest(true);
+          }} className="bg-gradient-to-r from-cyan-500 to-blue-800 text-white px-4 py-2 text-sm font-medium rounded-full hover:bg-gradient-to-r hover:from-cyan-800 hover:to-blue-800 cursor-pointer flex items-center justify-center gap-2">
+          <IoMdMail />
+          Request
+        </button>
       </div>
     </div>
   );

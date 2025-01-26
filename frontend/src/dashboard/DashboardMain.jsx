@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FaBars } from 'react-icons/fa6'
 import { useRecoilState } from 'recoil';
  
 import { MdDarkMode, MdLightMode } from 'react-icons/md';
 import ProfileIcon from './components/profile/ProfileIcon';
- import { openSideBar } from '../recoil/states';
+ import { allTeams, openSideBar } from '../recoil/states';
  import { useDarkMode } from '../contexts/DarkModeWrapper';
 import Sidebar from './components/SideBar';
 import Profile from './components/profile/Profile';
@@ -12,6 +12,9 @@ import EditProfile from './components/profile/EditProfile';
 import Search from './components/Search';
 import Teams from './components/Teams';
 import ChatMain from './components/chats/ChatMain';
+import Requests from './components/Requests';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../utils/axiosInstance';
 
 
 // Student Dashboard
@@ -19,7 +22,34 @@ export default function Dashboard() {
   const [open, setOpen] = useRecoilState(openSideBar);
   const [sideTab, setSideTab] = useState('Profile');
   const {mode, toggleMode} = useDarkMode();
+  const navigate = useNavigate();
 
+  const [teams, setteams] = useRecoilState(allTeams);
+  
+  useEffect(() => {
+    if (sideTab === "Search") {
+      navigate("/search");
+    }
+  }, [sideTab, navigate]);
+
+  const fetchTeams = async () => {
+    try {
+        // setisLoading(true)
+      const response = await axiosInstance.get("/team/user");
+      if(response.data){
+        console.log(response.data)
+        setteams(response.data.teams)
+      }
+    } catch (error) {
+      console.error("Error fetching teams:", error);
+    }finally{
+        // setisLoading(false)
+    }
+  };
+  useEffect(() => {
+    fetchTeams();
+  }, []);
+  
   return (
     <div className='flex  w-full bg-slate-50 dark:bg-stone-800
     overflow-y-hidden 
@@ -76,9 +106,11 @@ export default function Dashboard() {
           {sideTab === 'Search' && <Search/>}
           {sideTab === 'Teams' && <Teams/>}
           {sideTab === 'Chats' && <ChatMain/>}
+          {/* {sideTab === 'Settings' && <EditProfile/>}
+          
+          {sideTab === 'Teams' && <Teams/>} */}
+          {sideTab === 'Requests' && <Requests/>}
          
-
-
         </div>
 
         <div>
