@@ -72,7 +72,7 @@ const Search = () => {
 
   return (
     <div className=" bg-gray-100 dark:bg-stone-800 dark:text-gray-200 min-h-screen">
-      <div className="bg-stone-900 mb-8">
+      <div className="dark:bg-stone-900 mb-8">
         <Navbar />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

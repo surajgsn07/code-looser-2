@@ -15,6 +15,7 @@ import ChatMain from './components/chats/ChatMain';
 import Requests from './components/Requests';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../utils/axiosInstance';
+import JoinTeam from './components/JoinTeam';
 
 
 // Student Dashboard
@@ -31,6 +32,14 @@ export default function Dashboard() {
       navigate("/search");
     }
   }, [sideTab, navigate]);
+  
+  useEffect(() => {
+    if (sideTab === "Join a Team") {
+      navigate("/join-team");
+    }
+  }, [sideTab, navigate]);
+
+
 
   const fetchTeams = async () => {
     try {
@@ -110,6 +119,7 @@ export default function Dashboard() {
           
           {sideTab === 'Teams' && <Teams/>} */}
           {sideTab === 'Requests' && <Requests/>}
+          {sideTab == 'Join a Team' && <JoinTeam/>}
          
         </div>
 

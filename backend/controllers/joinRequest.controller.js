@@ -6,6 +6,10 @@ import Chat from "../models/chat.model.js";
 export const createJoinRequest = asynchandler(async(req,res)=>{
     const {teamId} = req.params;
     const userId = req.user._id;
+    const r = await JoinRequestModel.findOne({team:teamId , from:userId});
+    if(r){
+        return res.status(400).json({ message: "Request already exists" });
+    }
     const request = await JoinRequestModel.create({team:teamId , from:userId});
     if(!request){
         return res.status(400).json({ message: "Request not created" });
@@ -80,6 +84,7 @@ export const acceptJoinRequest = asynchandler(async(req,res)=>{
 
 export const getJoinRequestsByTeamId = asynchandler(async(req,res)=>{
     const {teamId} = req.params;
-    const requests = await JoinRequestModel.find({team:teamId , status:"requested"});
+    const requests = await JoinRequestModel.find({team:teamId , status:"requested"}).populate("from");
     res.status(200).json({ requests });
 })
+

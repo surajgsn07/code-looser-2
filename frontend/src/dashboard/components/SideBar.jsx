@@ -13,42 +13,38 @@ import { logoutUser } from "./../../apis/auth";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { RiTeamLine } from "react-icons/ri";
-import { FaSms } from 'react-icons/fa';
 import { IoChatboxEllipses } from "react-icons/io5";
 
+import { FaUsers } from "react-icons/fa";
+
 const listData = [
-    // {
-    //     name: "Dashboard",
-    //     icon: <MdDashboard size={20} />,
-    // },
-    {
-        name: "Profile",
-        icon: <MdPerson  size={20} />,
-    },
-    // {
-    //     name: "Settings",
-    //     icon: <MdSettings   size={20} />,
-    // },
-    {
-        name:"Teams",
-        icon:<RiTeamLine  size={20} />
-    },
-    {
-        name:"Chats",
-        icon:<IoChatboxEllipses  size={20} />
-    },
-    {
-        name: "Requests",
-        icon: <GrResources size={20} />,
-    },
-    {
-        name: "Search",
-        icon: <FaSearchengin size={20} />,
-      },
-]
- 
-  
- 
+
+  {
+    name: "Profile",
+    icon: <MdPerson size={20} />,
+  },
+
+  {
+    name: "Requests",
+    icon: <GrResources size={20} />,
+  },
+  {
+    name: "Teams",
+    icon: <RiTeamLine size={20} />,
+  },
+  {
+    name: "Chats",
+    icon: <IoChatboxEllipses size={20} />,
+  },
+  {
+    name: "Search",
+    icon: <FaSearchengin size={20} />,
+  },
+  {
+    name:"Join a Team",
+    icon: <FaUsers size={20} />,
+  }
+];
 export default function Sidebar({ setTab, tab, setOpen }) {
   const [open] = useRecoilState(openSideBar);
   const [openModal, setOpenModal] = useState(false);
