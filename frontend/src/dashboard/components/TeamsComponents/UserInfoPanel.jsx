@@ -3,8 +3,7 @@ import React from "react";
 const UserInfoPanel = ({ user, onClose }) => {
   if (!user) return null;
 
-  console.log({user})
-
+  
   return (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-end z-50">
       <div className="bg-gradient-to-br from-white to-stone-100 dark:from-stone-800 dark:to-stone-900 text-stone-900 dark:text-white w-96 h-full p-6 shadow-2xl transform transition-transform duration-300 ease-in-out">

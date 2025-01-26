@@ -10,6 +10,7 @@ import Dashboard from './dashboard/DashboardMain';
 import SignUp from './pages/Auth/SignUp';
 import Login from './pages/Auth/Login';
 import Search from './dashboard/components/Search';
+import JoinTeam from './dashboard/components/JoinTeam';
 function App() {
    const navigate = useNavigate();
   const [currentUserData, setUserData] = useRecoilState(userData);
@@ -54,6 +55,7 @@ function App() {
       <Route path="/signup" element={<div><SignUp /></div>} />
       <Route path="/dashboard" element={<div><Dashboard /></div>} />
       <Route path='/search' element={<div><Search /></div>} />
+      <Route path='/join-team' element={<div><JoinTeam/></div>} />
       </Routes>
   )
 }

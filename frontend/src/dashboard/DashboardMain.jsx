@@ -13,6 +13,7 @@ import Search from './components/Search';
 import Teams from './components/Teams';
 import Requests from './components/Requests';
 import { useNavigate } from 'react-router-dom';
+import JoinTeam from './components/JoinTeam';
 
 
 // Student Dashboard
@@ -27,6 +28,14 @@ export default function Dashboard() {
       navigate("/search");
     }
   }, [sideTab, navigate]);
+  
+  useEffect(() => {
+    if (sideTab === "Join a Team") {
+      navigate("/join-team");
+    }
+  }, [sideTab, navigate]);
+
+
 
   return (
     <div className='flex  w-full bg-slate-50 dark:bg-stone-800
@@ -84,6 +93,7 @@ export default function Dashboard() {
           
           {sideTab === 'Teams' && <Teams/>}
           {sideTab === 'Requests' && <Requests/>}
+          {sideTab == 'Join a Team' && <JoinTeam/>}
          
         </div>
 

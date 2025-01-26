@@ -30,7 +30,7 @@ export const createTeam = asynchandler(async (req, res) => {
 });
 
 export const getAllTeams = asynchandler(async (req, res) => {
-    const teams = await Team.find();
+    const teams = await Team.find().populate('members');
     res.status(200).json({ teams });
 });
 
@@ -53,7 +53,7 @@ export const deleteTeamById = asynchandler(async (req, res) => {
 export const updateTeamById = asynchandler(async (req, res) => {
     const { id } = req.params;
     const { name, description, size } = req.body;
-    const team = await Team.findByIdAndUpdate(id, { name, description, size }, { new: true });
+    const team = await Team.findByIdAndUpdate(id, { name, description, size }, { new: true }).populate('members');
     if(!team){
         return res.status(404).json({ message: "Team not found" });
     }

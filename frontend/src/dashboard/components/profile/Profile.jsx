@@ -69,7 +69,7 @@ const Profile = ({ setSideTab }) => {
           ) : (<img
             src={user?.avatar || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTcZsL6PVn0SNiabAKz7js0QknS2ilJam19QQ&s"}
             alt="User Avatar"
-            className="w-40  
+            className="w-40 h-40 
                  rounded-full bg-cover bg-white ring-2 ring-cyan-800  shadow-lg"
           />)}
 

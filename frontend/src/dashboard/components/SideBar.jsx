@@ -13,6 +13,7 @@ import { logoutUser } from "./../../apis/auth";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import { RiTeamLine } from "react-icons/ri";
+import { FaUsers } from "react-icons/fa";
 
 const listData = [
   {
@@ -39,6 +40,10 @@ const listData = [
     name: "Search",
     icon: <FaSearchengin size={20} />,
   },
+  {
+    name:"Join a Team",
+    icon: <FaUsers size={20} />,
+  }
 ];
 export default function Sidebar({ setTab, tab, setOpen }) {
   const [open] = useRecoilState(openSideBar);
