@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CreateTeam from "./TeamsComponents/CreateTeam";
+import MyTeam from "./TeamsComponents/MyTeam";
 
 const Teams = () => {
   const [activeTab, setActiveTab] = useState("My Teams");
@@ -37,10 +38,7 @@ const Teams = () => {
       <div className="p-4">
         {activeTab === "My Teams" ? (
           <div>
-            <h1 className="text-xl font-semibold mb-2">My Teams</h1>
-            <p className="text-gray-700 dark:text-gray-300">
-              Here is the list of all your teams.
-            </p>
+            <MyTeam/>
           </div>
         ) : (
           <div>

@@ -59,3 +59,12 @@ export const updateTeamById = asynchandler(async (req, res) => {
     }
     res.status(200).json({ message: "Team updated successfully", team });
 });
+
+
+export const getUserTeams = asynchandler(async (req, res) => {
+    const teams = await Team.find({ members: { $in: [req.user._id] } }).populate('members'); // Find all teams where user is a member
+    if (!teams) {
+        return res.status(400).json({ message: "No teams found" });
+    }
+    res.status(200).json({ teams }); // Return all teams
+});

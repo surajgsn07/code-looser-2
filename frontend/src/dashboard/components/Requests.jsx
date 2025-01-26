@@ -48,7 +48,6 @@ const Requests = () => {
     }
   };
 
-  console.log("invites", invites);
 
   useEffect(() => {
     fetchRequests();

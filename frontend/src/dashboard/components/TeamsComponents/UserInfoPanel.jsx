@@ -3,6 +3,8 @@ import React from "react";
 const UserInfoPanel = ({ user, onClose }) => {
   if (!user) return null;
 
+  console.log({user})
+
   return (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-end z-50">
       <div className="bg-gradient-to-br from-white to-stone-100 dark:from-stone-800 dark:to-stone-900 text-stone-900 dark:text-white w-96 h-full p-6 shadow-2xl transform transition-transform duration-300 ease-in-out">
@@ -40,11 +42,20 @@ const UserInfoPanel = ({ user, onClose }) => {
                 <span className="font-medium">Email:</span> {user.email}
               </p>
               <p className="text-stone-600 dark:text-stone-300">
-                <span className="font-medium">Location:</span> {user?.address?.city},{" "}
-                {user?.address?.state}, {user?.address?.country}
+                <span className="font-medium">Location:</span> 
+
+                {user.address?.city === "undefined" ? "" : user.address?.city}{' '}
+                {user.address?.state === "undefined" ? "" : user.address?.state}{' '}
+                {user.address?.country === "undefined" ? "" : user.address?.country}
+
+                {user.address?.city === "undefined" && user.address?.state === "undefined" && user.address?.country === "undefined" ? "NA" : ""}
+
+                {}
+
+
               </p>
               <p className="text-stone-600 dark:text-stone-300">
-                <span className="font-medium">Skills:</span> {user.skills?.join(", ")}
+                <span className="font-medium">Skills:</span> {user.skills?.join(", ").trim() === "" ? "None" : user.skills?.join(", ").trim()} 
               </p>
             </div>
           </div>
